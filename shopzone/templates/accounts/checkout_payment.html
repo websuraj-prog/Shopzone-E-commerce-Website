@@ -1,0 +1,257 @@
+{% extends "base/base.html" %}
+{% block title %}Payment{% endblock %}
+{% load static %} {% load crispy_forms_tags %} {% load payment_tags %}
+
+{% block start %}
+
+<section class="section-content padding-y">
+  <div class="container">
+    {% include 'base/alert.html' %}
+
+    <div class="row">
+
+      <!-- LEFT -->
+      <main class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5>Payment Method</h5>
+          </div>
+
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+
+              <!-- COD -->
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment_mode" value="cod">
+                <label class="form-check-label">
+                  💵 Cash on Delivery
+                </label>
+              </div>
+
+              <hr>
+
+              <!-- UPI -->
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment_mode" value="upi">
+                <label class="form-check-label">
+                  📱 UPI Payment
+                </label>
+              </div>
+
+              <!-- UPI SECTION -->
+              <div id="upi-section"
+                style="display:none; padding:15px; border:1px solid #ddd; border-radius:8px; margin-top:10px;">
+
+                <label class="fw-bold">Choose UPI Method</label>
+
+                <!-- OPTION 1 -->
+                <div class="form-check mt-2">
+                  <input class="form-check-input" type="radio" name="upi_option" value="id" checked>
+                  <label class="form-check-label">Enter UPI ID</label>
+                </div>
+
+                <div id="upi-id-box" class="mt-2">
+                  <select id="upi-select" class="form-select mb-2">
+                    <option value="">Select UPI</option>
+                    {% for handle in merchant_upi %}
+                    <option value="{{ handle }}">{{ handle }}</option>
+                    {% endfor %}
+                  </select>
+
+                  {{ upi_form.upi_id|as_crispy_field }}
+                </div>
+
+                <!-- OPTION 2 -->
+                <div class="form-check mt-3">
+                  <input class="form-check-input" type="radio" name="upi_option" value="app">
+                  <label class="form-check-label">Pay via Apps</label>
+                </div>
+
+                <div id="upi-apps" style="display:none;" class="mt-3">
+                  <button type="button" class="btn btn-outline-primary" onclick="payViaUPI()">GPay</button>
+                  <button type="button" class="btn btn-outline-success" onclick="payViaUPI()">PhonePe</button>
+                  <button type="button" class="btn btn-outline-info" onclick="payViaUPI()">Paytm</button>
+                </div>
+
+              </div>
+
+              <hr>
+
+              <!-- CARD -->
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment_mode" value="card">
+                <label class="form-check-label">
+                  💳 Card / Online Payment
+                </label>
+              </div>
+
+              <!-- CARD SECTION -->
+              <div id="card-section" style="display:none; padding:15px; border:1px solid #ddd; border-radius:8px; margin-top:10px;">
+                <div class="text-center mb-3">
+                  <i class="fas fa-credit-card fa-3x text-primary mb-2"></i>
+                  <h6>Pay securely with Card</h6>
+                </div>
+                <button type="button" onclick="initRazorpay()" class="btn btn-primary w-100 mb-2">
+                  💳 Pay ₹{{ total|default:0 }} via Razorpay
+                </button>
+<small class="text-muted d-block text-center">
+                  <i class="fas fa-lock"></i> 100% Secure Payment
+                </small>
+{% if razorpay_key|razorpay_is_test %}
+                <div class="alert alert-warning mt-2 small">
+                  <strong>TEST MODE:</strong> Use test card <code>4111 1111 1111 1111</code> (any CVV, future expiry).
+                </div>
+                {% endif %}
+              </div>
+
+              <hr>
+
+              <button type="submit" class="btn btn-success btn-lg w-100">
+                Continue
+              </button>
+
+            </form>
+          </div>
+        </div>
+      </main>
+
+      <!-- RIGHT -->
+      <aside class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h6>Order Summary</h6>
+          </div>
+          <div class="card-body">
+
+            <p><strong>Total: ₹{{ cart.get_cart_total_price_after_coupon }}</strong></p>
+
+            <a href="{% url 'checkout_addresses' %}" class="btn btn-secondary w-100 mb-2">Change Address</a>
+            <a href="{% url 'cart' %}" class="btn btn-outline-secondary w-100">Edit Cart</a>
+
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+  // PAYMENT TOGGLE
+  document.querySelectorAll('input[name="payment_mode"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+
+      document.getElementById('upi-section').style.display = 'none';
+      document.getElementById('card-section').style.display = 'none';
+
+      if (this.value === 'upi') {
+        document.getElementById('upi-section').style.display = 'block';
+      }
+
+      if (this.value === 'card') {
+        document.getElementById('card-section').style.display = 'block';
+      }
+
+    });
+  });
+
+  // UPI OPTION TOGGLE
+  document.querySelectorAll('input[name="upi_option"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+
+      if (this.value === 'id') {
+        document.getElementById('upi-id-box').style.display = 'block';
+        document.getElementById('upi-apps').style.display = 'none';
+      } else {
+        document.getElementById('upi-id-box').style.display = 'none';
+        document.getElementById('upi-apps').style.display = 'block';
+      }
+
+    });
+  });
+
+  // UPI AUTOFILL
+  const upiSelect = document.getElementById('upi-select');
+  const upiInput = document.getElementById('id_upi_id');
+
+  if (upiSelect && upiInput) {
+    upiSelect.addEventListener('change', function () {
+      upiInput.value = this.value;
+    });
+  }
+
+  // UPI APP PAYMENT
+  function payViaUPI() {
+    const form = document.querySelector('form');
+    const upiRadio = document.querySelector('input[name="upi_option"][value="app"]');
+    const paymentRadio = document.querySelector('input[name="payment_mode"][value="upi"]');
+    
+    upiRadio.checked = true;
+    paymentRadio.checked = true;
+    
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  }
+
+  // Razorpay - init on card click
+  let razorpayInstance = null;
+
+  function initRazorpay() {
+    if (razorpayInstance) {
+      razorpayInstance.open();
+      return;
+    }
+    if (!'{{ razorpay_order_id|default:'' | safe }}') {
+      console.log('Payment order not ready yet, reloading page...');
+      window.location.reload();
+      return;
+    }
+    
+    try {
+      const options = {
+        key: "{{ razorpay_key|default:'rzp_test_SRnwLngo15OOEf' | safe }}",
+amount: parseInt('{{ total_paise|default:"0" }}'),
+        currency: "INR",
+        name: "Shopzone",
+        order_id: "{{ razorpay_order_id|default:'' | safe }}",
+        handler: function(response) {
+          console.log('Razorpay success:', response);
+          fetch('/accounts/verify-payment/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            })
+            }).then(res => res.json()).then(data => {\n            if (data.status === 'success') {\n              window.location.href = `/accounts/success/?order_id=${response.razorpay_order_id}`;\n            } else {\n              alert('Verification failed, but payment successful. Check orders.');\n              window.location.href = `/accounts/order_history/`;\n            }\n          }).catch(err => {
+            console.error('Verify failed:', err);
+            alert('Payment complete but verification issue. Check order history.');
+            window.location.href = `/accounts/order_history/`;
+          });
+        },
+        prefill: {
+          name: "{{ user.first_name|default:'' }} {{ user.last_name|default:'' }}"
+        },
+        theme: {
+          color: "#3399cc"
+        }
+      };
+      
+      razorpayInstance = new Razorpay(options);
+      razorpayInstance.open();
+    } catch (error) {
+      console.error('Razorpay error:', error);
+      alert('Payment init failed. Try again.');
+    }
+  }
+
+
+</script>
+
+{% endblock %}

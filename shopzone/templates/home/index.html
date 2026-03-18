@@ -1,0 +1,155 @@
+{% extends "base/base.html"%} {% block start %}
+<style>
+  .filter-section {
+      margin-bottom: 20px;
+  }
+
+  .form-group {
+      margin-bottom: 10px;
+  }
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      scale: 0.5;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  .card {
+    animation: appear linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+</style>
+<div class="container mt-3 pt-3">
+  {% include 'base/alert.html' %}
+  <!-- Filter Section -->
+  <div class="filter-section mb-3">
+    <form method="GET" class="row">
+      <div class="form-group col-md-4">
+        <label for="category">Category:</label>
+        <select id="category" name="category" class="form-control" onchange="this.form.submit()">
+          <option value="">All</option>
+          {% for category in categories %}
+          <option value="{{ category.slug }}" {% if selected_category == category.slug %} selected {% endif %}>
+            {{ category.category_name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label for="brand">Brand:</label>
+        <select id="brand" name="brand" class="form-control" onchange="this.form.submit()">
+          <option value="">All</option>
+          {% for brand in brands %}
+          <option value="{{ brand }}" {% if selected_brand == brand %} selected {% endif %}>
+            {{ brand }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <!-- Sort Section -->
+      <div class="form-group col-md-4">
+        <label for="sort">Sort by:</label>
+        <select id="sort" name="sort" class="form-control" onchange="this.form.submit()">
+          <option value="">Select</option>
+          <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>Newest</option>
+          <option value="priceAsc" {% if selected_sort == 'priceAsc' %}selected{% endif %}>Price: Low-High</option>
+          <option value="priceDesc" {% if selected_sort == 'priceDesc' %}selected{% endif %}>Price: High-Low</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <!-- Product List -->
+  <div class="row">
+    {% if products %}
+      {% for product in products %}
+      <div class="col-md-3">
+        <figure class="card card-product-grid">
+          <div class="img-wrap">
+            <img src="/media/{{product.product_images.all.0.image}}" />
+          </div>
+          <figcaption class="info-wrap border-top">
+            <a href="{% url 'get_product' product.slug %}" class="title">
+              <b>{{ product.product_name }}</b></a>
+            <div class="price mt-2">₹{{product.price}}.00</div>
+          </figcaption>
+        </figure>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No products found.</p>
+    {% endif %}
+  </div>
+
+  <!-- Sneakers JSON Products List -->
+  <h3 class="mt-5">Sneakers Products</h3>
+  <div class="row">
+    {% if sneakers_data %}
+      {% for product in sneakers_data %}
+          <div class="col-md-3">
+            <figure class="card card-product-grid">
+              <div class="img-wrap">
+                <a href="{% url 'sneaker_detail' product.name %}">
+                  <img src="{{ product.image_url }}" alt="{{ product.name }}" />
+                </a>
+              </div>
+              <figcaption class="info-wrap border-top">
+                <a href="{% url 'sneaker_detail' product.name %}">
+                  <b>{{ product.name }}</b>
+                </a>
+                <div class="price mt-2">₹{{ product.price_inr }}</div>
+              </figcaption>
+            </figure>
+          </div>
+      {% endfor %}
+    {% else %}
+      <p>No sneakers products found.</p>
+    {% endif %}
+  </div>
+
+  <!-- Pagination Section -->
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center mb-4">
+      {% if products.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ products.previous_page_number }}&category={{ selected_category }}&sort={{ selected_sort }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo; Previous</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link">Previous</a>
+      </li>
+      {% endif %}
+
+      {% for num in products.paginator.page_range %}
+      <li class="page-item {% if products.number == num %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}&category={{ selected_category }}&sort={{ selected_sort }}">{{ num }}</a>
+      </li>
+      {% endfor %}
+
+      {% if products.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ products.next_page_number }}&category={{ selected_category }}&sort={{ selected_sort }}" aria-label="Next">
+          <span aria-hidden="true">Next &raquo;</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link">Next</a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  
+</div>
+
+{% endblock %}

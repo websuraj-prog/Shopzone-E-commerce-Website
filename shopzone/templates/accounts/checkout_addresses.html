@@ -1,0 +1,74 @@
+{% extends "base/base.html" %}
+{% block title %}Select Address{% endblock %}
+{% block start %} {% load static %} {% load crispy_forms_tags %}
+
+<section class="section-content padding-y">
+  <div class="container">
+    {% include 'base/alert.html' %}
+    <h2>Select or Add Shipping Address</h2>
+    
+    <div class="row">
+      <main class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            {% if addresses %}
+              <h5>Existing Addresses</h5>
+              {% for address in addresses %}
+                <div class="card mb-3">
+                  <div class="card-body">
+<p>{{ address.flat_house_building_name }} {{ address.area_sector_locality }}, {{ address.city }} {{ address.zip_code }}</p>
+                    <form method="post" class="d-inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="address_id" value="{{ address.pk }}">
+                      <button type="submit" class="btn btn-primary btn-sm">Select This Address</button>
+                    </form>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>No saved addresses. Add a new one below.</p>
+            {% endif %}
+          </div>
+        </div>
+      </main>
+      
+      <aside class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h5>Add New Address</h5>
+          </div>
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+              <div class="form-row">
+                <div class="form-group col-md-6">{{ address_form.first_name|as_crispy_field }}</div>
+                <div class="form-group col-md-6">{{ address_form.last_name|as_crispy_field }}</div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-8">{{ address_form.flat_house_building_name|as_crispy_field }}</div>
+                <div class="form-group col-md-4">{{ address_form.area_sector_locality|as_crispy_field }}</div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-8">{{ address_form.city|as_crispy_field }}</div>
+                <div class="form-group col-md-4">{{ address_form.zip_code|as_crispy_field }}</div>
+              </div>
+              {{ address_form.country|as_crispy_field }}
+              {{ address_form.phone|as_crispy_field }}
+              <button type="submit" class="btn btn-primary">Add & Continue to Payment</button>
+            </form>
+          </div>
+        </div>
+        
+        <div class="card mt-3">
+          <div class="card-body">
+            <h6>Order Summary</h6>
+            <p>Total: ₹{{ cart.get_cart_total_price_after_coupon }}</p>
+            <a href="{% url 'cart' %}" class="btn btn-secondary">Back to Cart</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

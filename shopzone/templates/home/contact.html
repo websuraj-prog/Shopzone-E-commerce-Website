@@ -1,0 +1,146 @@
+{% extends "base/base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block start %}
+
+<section class="section-content padding-bottom">
+  <div class="mx-auto" style="max-width: 85rem; margin-top: 50px">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-5 mr-auto">
+          <h2 style="text-align: left">Contact Us</h2>
+          <p
+            class="mb-5"
+            style="margin-top: revert; text-align: justify; line-height: 2rem"
+          >
+            Have questions or need help with your order? Our dedicated support
+            team is here to assist you with any inquiries you may have. Whether
+            you need help tracking an order, have questions about a product, or
+            need assistance with a return, we're here to help. Don't hesitate to
+            reach out to us anytime!
+          </p>
+          <ul class="contact-info list-unstyled pl-md-5 mb-5">
+            <li class="d-flex text-black mb-2">
+              <span class="mr-3"><i class="fas fa-map-marker-alt"></i></span>
+              Mumbai, Maharashtra, India
+            </li>
+            <li class="d-flex text-black mb-2">
+              <span class="mr-3"><i class="fas fa-phone"></i></span>
+              +91 9967570756
+            </li>
+            <li class="d-flex text-black">
+              <span class="mr-3"><i class="fas fa-envelope"></i></span>
+              <a href="mailto:support@ecommerce.com">surajvishawakarma01@gmail.com</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <form method="POST" class="mb-5">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+            {% include "base/alert.html" %}
+            
+            <div class="row">
+              <div class="col-md-6 form-group">
+                {{ form.first_name.label_tag }}
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                  <div class="text-danger">{{ form.first_name.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                {{ form.last_name.label_tag }}
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                  <div class="text-danger">{{ form.last_name.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-12 form-group">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                  <div class="text-danger">{{ form.email.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-12 form-group">
+                {{ form.subject.label_tag }}
+                {{ form.subject }}
+                {% if form.subject.errors %}
+                  <div class="text-danger">{{ form.subject.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-12 form-group">
+                {{ form.message.label_tag }}
+                {{ form.message }}
+                {% if form.message.errors %}
+                  <div class="text-danger">{{ form.message.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-12">
+                <button type="submit" id="submit-btn" class="btn btn-primary rounded-0 py-2 px-4">
+                  <span id="btn-text">Send Message</span>
+                  <span id="btn-loading" style="display:none;">Sending...</span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- EmailJS -->
+          <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+          <script>
+            emailjs.init('9_sg2XfIf7ukRRXX_');
+
+            document.getElementById('contact-form').addEventListener('submit', function(e) {
+              e.preventDefault();
+              const btn = document.getElementById('submit-btn');
+              const btnText = document.getElementById('btn-text');
+              const btnLoading = document.getElementById('btn-loading');
+
+              btnText.style.display = 'none';
+              btnLoading.style.display = 'inline';
+              btn.disabled = true;
+
+              emailjs.send('service_os5c7tn', 'template_kywm15f', {
+                from_name: document.querySelector('#id_first_name').value + ' ' + document.querySelector('#id_last_name').value,
+                from_email: document.querySelector('#id_email').value,
+                subject: document.querySelector('#id_subject').value,
+                message: document.querySelector('#id_message').value
+              }).then(() => {
+                btnText.textContent = 'Sent!';
+                setTimeout(() => {
+                  btnText.textContent = 'Send Message';
+                  btnText.style.display = 'inline';
+                  btnLoading.style.display = 'none';
+                  btn.disabled = false;
+                  this.submit(); // Server DB save
+                }, 2000);
+              }).catch(error => {
+                console.error('EmailJS:', error);
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                btn.disabled = false;
+                this.submit(); // Fallback
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
