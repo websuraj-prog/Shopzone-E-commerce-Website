@@ -83,7 +83,12 @@ WSGI_APPLICATION = 'ecomm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {\n    'default': dj_database_url.config(\n        default=f'sqlite:///{BASE_DIR}/db.sqlite3',\n        conn_max_age=3600\n    )\n}
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR}/db.sqlite3',
+        conn_max_age=3600
+    )
+}
 
 
 # Password validation
@@ -118,7 +123,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'public' / 'media' / 'static'\nSTATICFILES_DIRS = []\n\nSTATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = BASE_DIR / 'public' / 'media' / 'static'
+STATICFILES_DIRS = []
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
