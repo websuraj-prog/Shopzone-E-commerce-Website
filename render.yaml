@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: shopzone
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn shopzone.ecomm.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DJANGO_SETTINGS_MODULE
+        value: shopzone.ecomm.settings
+        # Add other vars in Render dashboard: SECRET_KEY, DATABASE_URL, etc.
+
