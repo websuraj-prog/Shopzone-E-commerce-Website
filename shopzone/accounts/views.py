@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from products.models import Product, ColorVariant, SizeVariant, Coupon
-from home.models import ShippingAddress
+from shopzone.home.models import ShippingAddress
 from accounts.models import Profile, Cart, CartItem, Order, OrderItem
 from accounts.forms import UserUpdateForm, UserProfileForm, ShippingAddressForm, CustomPasswordChangeForm, UPIForm
 

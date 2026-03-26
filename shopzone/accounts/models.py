@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from shopzone.base.models import BaseModel
 from shopzone.products.models import Product, ColorVariant, SizeVariant, Coupon
-from home.models import ShippingAddress
 from django.conf import settings
 import os
 # Create your models here.
@@ -16,7 +15,7 @@ class Profile(BaseModel):
     profile_image = models.ImageField(upload_to='profile', null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
-    shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.CASCADE, related_name="shipping_address", null=True, blank=True)
+    shipping_address = models.ForeignKey('home.ShippingAddress', on_delete=models.CASCADE, related_name="shipping_address", null=True, blank=True)
 
     def __str__(self):
         return self.user.username

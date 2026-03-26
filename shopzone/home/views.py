@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import render
 from django.utils.text import slugify
-from products.models import Product, Category, SizeVariant, Wishlist, ProductImage, ColorVariant
+from shopzone.products.models import Product, Category, SizeVariant, Wishlist, ProductImage, ColorVariant
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import json
 import os
@@ -75,7 +75,7 @@ def index(request):
 
 
 def sneaker_detail(request, name):
-    from products.models import SizeVariant
+    from shopzone.products.models import SizeVariant
     sneakers_data = []
     try:
         json_path = settings.BASE_DIR / 'sneakers.json'
@@ -162,7 +162,7 @@ def privacy_policy(request):
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
-from products.models import Product, Category, SizeVariant, Wishlist
+from shopzone.products.models import Product, Category, SizeVariant, Wishlist
 from django.urls import reverse
 import json
 import os
