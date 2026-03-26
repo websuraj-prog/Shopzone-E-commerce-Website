@@ -1,0 +1,5 @@
+- [x] 1. Edit shopzone/ecomm/settings.py: Fix DATABASES from string to dict
+- [x] 2. Local test: python shopzone/manage.py runserver (no DATABASES error - success)
+- [ ] 3. Check migrations: python shopzone/manage.py makemigrations --dry-run && python shopzone/manage.py migrate
+- [ ] 4. Git commit & push for Render redeploy
+- [ ] 5. Verify Render logs (no error)

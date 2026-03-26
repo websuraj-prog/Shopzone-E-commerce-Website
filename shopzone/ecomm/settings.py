@@ -82,15 +82,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ecomm.wsgi.application'
 
 
-# Database - ROBUST MULTILINE FORMAT FOR DEPLOYMENT
-DATABASES = textwrap.dedent("""
-    {
-        'default': dj_database_url.config(
-            default=f'sqlite:///{BASE_DIR}/db.sqlite3',
-            conn_max_age=3600
-        )
-    }
-""").strip().strip('{}')
+# Database - Fixed for Render deployment with DATABASE_URL
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR}/db.sqlite3',
+        conn_max_age=3600
+    )
+}
 
 
 # Password validation
