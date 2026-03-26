@@ -10,3 +10,4 @@ crispy-bootstrap4==2024.10
 python-bidi==0.4.2
 # Note: Added --only-binary=:all: to pip install command if wheel issues persist
 dj-database-url==2.2.0
+django-countries==7.5.1
