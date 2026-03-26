@@ -1,7 +1,9 @@
-# TODO: Fix Render Deployment - ModuleNotFoundError: No module named 'accounts'
+# Fix Django Accounts AppConfig Deployment Error on Render
 
-## Plan Steps:
-- [x] Step 1: Edit shopzone/ecomm/settings.py to use explicit app labels ('shopzone.accounts', etc.) in INSTALLED_APPS
-- [x] Step 2: Local settings check passed (no errors from Django check)
-- [ ] Step 3: Commit and push to trigger Render redeploy
-- [ ] Step 4: Verify deployment success on Render
+## Steps:
+- [ ] Step 1: Edit shopzone/accounts/apps.py to fix AppConfig.name from 'accounts' to 'shopzone.accounts'
+- [ ] Step 2: Verify the fix locally with `python shopzone/manage.py check`
+- [ ] Step 3: Commit/push changes to trigger Render redeploy
+- [ ] Step 4: Confirm deployment success on Render
+
+Current progress: Starting Step 1
