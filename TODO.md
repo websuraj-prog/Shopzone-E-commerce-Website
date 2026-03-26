@@ -1,7 +1,7 @@
 # Fix pkg_resources ModuleNotFoundError for Render Deployment
 
 ## Plan Steps
-1. [x] Edit requirements.txt: Add `setuptools>=68.0.0`
+1. [x] Edit requirements.txt: Pin setuptools==69.5.1 for Render compatibility
 2. [ ] User commits/pushes changes to trigger Render rebuild
 3. [ ] Verify Render build logs: pip installs setuptools successfully
 4. [ ] Test Django startup: No import errors, site loads

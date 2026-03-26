@@ -7,7 +7,7 @@ python-decouple==3.8
 razorpay==1.4.2
 django-crispy-forms==2.3
 crispy-bootstrap4==2024.10
-setuptools>=68.0.0
+setuptools==69.5.1
 python-bidi==0.4.2
 # Note: Added --only-binary=:all: to pip install command if wheel issues persist
 dj-database-url==2.2.0
