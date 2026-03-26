@@ -1,11 +1,13 @@
 """
-Django settings for ecomm project.
+Django settings for ecomm project - FIXED VERSION for Render deployment
+This version uses textwrap.dedent for robust multiline formatting
 """
 
 import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import textwrap
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,15 +82,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ecomm.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR}/db.sqlite3',
-        conn_max_age=3600
-    )
-}
+# Database - ROBUST MULTILINE FORMAT FOR DEPLOYMENT
+DATABASES = textwrap.dedent("""
+    {
+        'default': dj_database_url.config(
+            default=f'sqlite:///{BASE_DIR}/db.sqlite3',
+            conn_max_age=3600
+        )
+    }
+""").strip().strip('{}')
 
 
 # Password validation
@@ -170,4 +172,3 @@ RAZORPAY_SECRET_KEY = os.getenv('RAZORPAY_SECRET_KEY', 'ABPXFAuDYLgy1UAjoN7oVUBZ
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-
