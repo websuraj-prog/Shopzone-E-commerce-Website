@@ -1,5 +1,5 @@
 from django.db import models
-from base.models import BaseModel
+from shopzone.base.models import BaseModel
 from django.utils.text import slugify
 from django.utils.html import mark_safe
 from django.contrib.auth.models import User

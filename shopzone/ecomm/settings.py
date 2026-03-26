@@ -37,16 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'shopzone.base',  # Base first (used by other apps)
+    
     # Custom apps
     'shopzone.accounts',
     'shopzone.home',
     'shopzone.products',
-    'shopzone.base',
     
     # Third-party apps
     'crispy_forms',
     'crispy_bootstrap4',
-
 ]
 
 MIDDLEWARE = [

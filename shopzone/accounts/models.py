@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from base.models import BaseModel
-from products.models import Product, ColorVariant, SizeVariant, Coupon
+from shopzone.base.models import BaseModel
+from shopzone.products.models import Product, ColorVariant, SizeVariant, Coupon
 from home.models import ShippingAddress
 from django.conf import settings
 import os

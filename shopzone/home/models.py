@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from base.models import BaseModel
+from shopzone.base.models import BaseModel
 from django.urls import reverse
 from django.db import models
 from django import forms
