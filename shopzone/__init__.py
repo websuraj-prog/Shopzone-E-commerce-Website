@@ -1,0 +1,3 @@
+"""
+Shopzone project package initialization.
+"""
